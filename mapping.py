@@ -7,9 +7,9 @@ __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
     # Sets the directory to where the current file is being run from
 
-DATAFILE = cbook.get_sample_data(os.path.join(__location__, 'map.jpg'))
+DATAFILE = cbook.get_sample_data(os.path.join(__location__, 'g152972.png'))
 IMAGE = imread(DATAFILE)
-plt.imshow(IMAGE, extent=[0, 165, -41, 41])
+plt.imshow(IMAGE, extent=[0, 1646, -411.5, 411.5])
 
 # Enter co-ordinates here
 POINTS = [[1, 2], [3, 4]]
