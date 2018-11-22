@@ -1,3 +1,3 @@
-This is a rather basic mapping tool that we made to help in the 2018 FRC challenge.
-In order to use it, go into the file mapping and add the co-ordinates into POINT_LIST. You will most likely have to change the limits of the axis (extent) in order to use it.
-Make sure that your background image is in the same directory and is called 'map.jpg'
+This is a rather basic mapping tool that we made to help with the use of an absolute co-ordinate system in the 2018 FRC challenge, it has since been updated to allow for visualisation of the instantaneous centre of rotation of the robot and the path the robot will take around this point.
+In order to use it, go into the file mapping and use the h_to_r2 function to convert and then map an ICR, if you already know the posistion of the ICR in r2 you can enter the data directly into plot_icr. If you want to use a different background image you will likely have to change the limits of the axis (extent) in order to use it.
+Make sure that your background image is in the same directory and is called 'map.png'
