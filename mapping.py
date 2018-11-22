@@ -27,18 +27,22 @@ def h_to_r2(pos: list, lmda: list):
     used in libswervedrive
     :return: the x y co-ordinates of lmda2
     """
-    lmda = np.array(lmda)
     robot_xy = np.array(pos[:2])
+    if abs(lmda[2]) < 1e-3:
+        theta = math.atan2(lmda[1], lmda[0])
+        return [robot_xy, theta, pos]
+    lmda = np.array(lmda)
     heading = pos[2]
     lmda = lmda[:2] / lmda[2]
     rotation = np.array([[math.sin(heading), math.cos(heading)], [-math.sin(heading), math.cos(heading)]])
     lmda = rotation @ lmda
-    return lmda + robot_xy
+    return [lmda + robot_xy, None, pos]
 
 
-def plot(point: np.ndarray, theta=0, bot_pos=None):
+def plot(point: np.ndarray, theta=None, bot_pos=None):
     """
     A function that plots the given point onto a map of the field.
+    It can plot x, y, heading points (red), ICRs (blue) and robots (green)
     :param point: the x (away from alliance wall) and y co-ordinates
     as an array 0, 0 is located in the centre of the aliance wall, x should
     never > 0
@@ -54,23 +58,41 @@ def plot(point: np.ndarray, theta=0, bot_pos=None):
     x = point[0]
     y = point[1]
 
-    # converts radians to degrees
-    phi = math.degrees(theta)
-    bot_phi = math.degrees(bot_pos[2])
-
     # ignore this is just array of 1's
     U = V = np.ones_like(x)
 
     # plots the icr arrow
-    AX.quiver(x, y, U, V, angles=phi, color='red')
-    plt.annotate(point_no, (x, y), color='blue')
+    if theta is None:
+        AX.plot(x, y, 'b.')
+    else:
+        # converts radians to degrees
+        phi = math.degrees(theta)
+        AX.quiver(x, y, U, V, angles=phi, color='red')
+    plt.annotate(point_no, (x, y), color='black')
     # plots the robot arrow if needed
     if bot_pos is not None:
-        AX.quiver(bot_pos[0], bot_pos[1], U, V, angles=bot_phi, color='green')
+        if bot_pos[2] is None:
+            AX.plot(bot_pos[0], bot_pos[1], 'g.')
+        else:
+            bot_phi = math.degrees(bot_pos[2])
+            AX.quiver(bot_pos[0], bot_pos[1], U, V, angles=bot_phi, color='green')
+        plt.annotate(point_no, (bot_pos[0], bot_pos[1]), color='black')
 
 
-plot(h_to_r2([1, 1, math.pi], [0.5, 0.5, math.sqrt(2)]), bot_pos=[1, 1, math.pi])
-plot(h_to_r2([1, -1, 0], [0.5, 0.5, math.sqrt(2)]), bot_pos=[1, -1, 0])
+plotables = [
+    h_to_r2([1, -1, 0], [0.5, 0.5, math.sqrt(2)]),
+    h_to_r2([1, 1, math.pi], [0.5, 0.5, math.sqrt(2)]),
+    h_to_r2([4, 1, 0], [1, 0, 0]),
+    [[7, -2], math.pi],
+]
+for i in range(len(plotables)):
+    if len(plotables[i]) == 1:
+        plot(plotables[i][0])
+    elif len(plotables[i]) == 2:
+        plot(plotables[i][0], plotables[i][1])
+    elif len(plotables[i]) == 3:
+        plot(plotables[i][0], plotables[i][1], plotables[i][2])
+    else:
+        raise "Incorrect number of arguments must be < 4 > 0"
 
 plt.show()
-# This bit actually does the plotting
